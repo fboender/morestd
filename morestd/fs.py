@@ -19,15 +19,9 @@ file_types = {
 }
 
 
-def find(root_dir, name=None, path=None, ftype=None, min_size=None,
-         max_size=None, uid=None, gid=None, depth=None, one_fs=True,
-         absolute=False, on_error=None):
+def file_info(path):
     """
-    Recursively find files and directories matching certain criteria.
-
-    Basically the unix `find` command, but for Python. For each file that
-    matches the criteria, a dict is yielded containing some basic information
-    about that file. Example:
+    Return file information on `path`. Example output:
 
         {
             'filename': 'passwd',
@@ -36,8 +30,36 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
             'type': 'file',
             'size': 2790,
             'uid': 0,
-            'gid': 0
+            'gid': 0,
+            'device': 64769
         }
+    """
+    fname = os.path.basename(path)
+    fdir = os.path.dirname(path)
+    fstat = os.lstat(path)
+    ftype = file_types.get(stat.S_IFMT(fstat.st_mode), "unknown")
+
+    return {
+        "filename": fname,
+        "dir": fdir,
+        "path": path,
+        "type": ftype,
+        "size": fstat.st_size,
+        "uid": fstat.st_uid,
+        "gid": fstat.st_gid,
+        "device": fstat.st_dev,
+    }
+
+
+def find(root_dir, name=None, path=None, ftype=None, min_size=None,
+         max_size=None, uid=None, gid=None, depth=None, one_fs=True,
+         absolute=False, on_error=None):
+    """
+    Recursively find files and directories matching certain criteria.
+
+    Basically the unix `find` command, but for Python. For each file that
+    matches the criteria, a dict is yielded containing some basic information
+    about that file (as returned by `file_info()`.
 
     `root_dir` is the starting directory from which to find files.
 
@@ -60,6 +82,8 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
     should receive one parameter, which is the full path to the file that
     caused the problem. If `on_error` is None (default), an exception is raised
     instead.
+
+    Symlinks are never followed.
     """
     # Figure out device which root_dir is on, so we can honor `one_fs`
     root_stat = os.stat(root_dir)
@@ -78,42 +102,33 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
             for fname in os.listdir(cur_dir):
                 fpath = os.path.join(cur_dir, fname)
                 try:
-                    fstat = os.lstat(fpath)
+                    fileinfo = file_info(fpath)
                 except Exception as err:
                     if on_error is None:
                         raise
                     else:
                         on_error(fpath, err)
+                        continue
 
-                ftype = file_types.get(stat.S_IFMT(fstat.st_mode), "unknown")
-                fileinfo = {
-                    "filename": fname,
-                    "dir": cur_dir,
-                    "path": fpath,
-                    "type": ftype,
-                    "size": fstat.st_size,
-                    "uid": fstat.st_uid,
-                    "gid": fstat.st_gid,
-                }
                 if (
                     (name is None or fnmatch.fnmatch(fname, name)) and
                     (path is None or fnmatch.fnmatch(fpath, path)) and
                     (ftype is None or ftype == fileinfo["type"]) and
-                    (min_size is None or fstat.st_size >= min_size) and
-                    (max_size is None or fstat.st_size <= max_size) and
-                    (uid is None or fstat.st_uid == uid) and
-                    (gid is None or fstat.st_gid == gid)
+                    (min_size is None or fileinfo["size"] >= min_size) and
+                    (max_size is None or fileinfo["size"] <= max_size) and
+                    (uid is None or fileinfo[""] == uid) and
+                    (gid is None or fileinfo[""] == gid)
                 ):
                     yield fileinfo
 
                 # Recurse into dir?
-                if stat.S_ISDIR(fstat.st_mode):
+                if fileinfo["type"] == "dir":
                     this_depth = fpath.lstrip(os.path.sep).count(os.path.sep)
                     if (
                         (depth is None or this_depth <= depth) and
-                        (one_fs is True and fstat.st_dev == root_dev)
+                        (one_fs is True and fileinfo["device"] == root_dev)
                     ):
-                        stack.append(fpath)
+                        stack.append(fileinfo["path"])
         except Exception as err:
             if on_error is None:
                 raise
