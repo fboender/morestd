@@ -7,6 +7,7 @@
 import os
 import stat
 import fnmatch
+import errno
 
 file_types = {
     4096: "fifo",
@@ -134,3 +135,19 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
                 raise
             else:
                 on_error(cur_dir, err)
+
+
+def mkdir_p(path):
+    """
+    Create directories and their parent directories if required.
+
+    Much the same as the `mkdir -p` shell util provides. Unlike `os.makedirs`,
+    this doesn't raise an exception if the path already exists.
+    """
+    try:
+        os.makedirs(path)
+    except OSError as err:
+        if err.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
