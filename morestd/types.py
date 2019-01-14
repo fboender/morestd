@@ -4,6 +4,7 @@
 # Copyright 2010-2018 Ferry Boender, released under the MIT license
 #
 
+
 def to_bool(s):
     """
     Convert string `s` into a boolean.
