@@ -6,6 +6,12 @@
 #   $ bash -c ". build.sla && test"
 #
 
+clean () {
+    # Clean the repo of artifacts
+    find ./ -name "*.pyc" -delete
+    find ./ -name "__pycache__" -delete
+}
+
 flake () {
     # Run flake lint tests
     flake8 morestd
