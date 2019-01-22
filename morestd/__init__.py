@@ -6,6 +6,7 @@
 
 version = (0, 1)
 
-from . import time  # noqa
-from . import fs    # noqa
+from . import time   # noqa
+from . import fs     # noqa
 from . import file   # noqa
+from . import shell  # noqa
