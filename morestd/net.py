@@ -19,3 +19,8 @@ def fqdn():
     if '.' not in fqdn:
         fqdn = socket.getfqdn()
     return fqdn
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

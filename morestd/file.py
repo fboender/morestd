@@ -26,3 +26,8 @@ def egrep(path, regex):
             return re.search(regex, mmap.mmap(f.fileno(),
                                               0,
                                               access=mmap.ACCESS_READ))
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

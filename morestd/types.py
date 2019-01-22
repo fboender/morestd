@@ -12,6 +12,15 @@ def to_bool(s):
     Convert string `s` into a boolean.
 
     `s` can be 'true', 'True', 1, 'false', 'False', 0.
+
+    Examples:
+
+    >>> to_bool("true")
+    True
+    >>> to_bool("0")
+    False
+    >>> to_bool(True)
+    True
     """
     if isinstance(s, bool):
         return s
@@ -64,3 +73,8 @@ def deepupdate(target, src, overwrite=True):
         else:
             if k not in target or overwrite is True:
                 target[k] = copy.copy(v)
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
