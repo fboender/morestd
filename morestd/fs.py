@@ -129,7 +129,8 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
                     (
                         follow_links is True and
                         fileinfo["type"] == "link" and
-                        os.path.isdir(fileinfo["path"])
+                        os.path.isdir(fileinfo["path"]) and
+                        fileinfo["path"].startswith(root_dir)
                     )
                 ):
                     this_depth = fpath.lstrip(os.path.sep).count(os.path.sep)
