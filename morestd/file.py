@@ -10,14 +10,18 @@ import mmap
 
 def egrep(path, regex):
     """
-    Grep for regex `regex` in file `path`. Should be reasonably fast. `regex`
-    may be both a compiled regexp (`re.compile()`), or a string. Files are
-    opened in binary mode, so the regexp must also be binary (e.g.
-    `b".*foo.*"`)
+    Grep for regex `regex` in file `path`. It uses memory mapping, so it should
+    be reasonably fast.
+
+    `regex` may be both a compiled regexp (`re.compile()`), or a string.
+
+    Files are opened in binary mode, so the regexp must also be binary (e.g.
+    `b".*foo.*"`). Symlinks are not dereferrenced. Since `egrep` uses memory
+    mapping, this will fail on symlinks.
 
     Returns match objects.
     """
-    with open(path, "r") as f:
+    with open(path, "rb") as f:
         if hasattr(regex, 'search'):
             return regex.search(mmap.mmap(f.fileno(),
                                           0,
