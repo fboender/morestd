@@ -54,7 +54,7 @@ def file_info(path):
 
 def find(root_dir, name=None, path=None, ftype=None, min_size=None,
          max_size=None, uid=None, gid=None, depth=None, one_fs=True,
-         absolute=False, on_error=None):
+         absolute=False, follow_links=False, on_error=None):
     """
     Recursively find files and directories matching certain criteria.
 
@@ -79,12 +79,13 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
     If `absolute` is set to True, `dirs` and `path` will be made absolute
     (relative to the `/` directory).
 
+    If `follow_links` is set to True, symlinks will be followed. This can lead
+    to endless loops. It is disabled by default.
+
     `on_error` is a callable which will be called when an error occurs. It
     should receive one parameter, which is the full path to the file that
     caused the problem. If `on_error` is None (default), an exception is raised
     instead.
-
-    Symlinks are never followed.
     """
     # Figure out device which root_dir is on, so we can honor `one_fs`
     root_stat = os.stat(root_dir)
@@ -123,7 +124,14 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
                     yield fileinfo
 
                 # Recurse into dir?
-                if fileinfo["type"] == "dir":
+                if (
+                    fileinfo["type"] == "dir" or
+                    (
+                        follow_links is True and
+                        fileinfo["type"] == "link" and
+                        os.path.isdir(fileinfo["path"])
+                    )
+                ):
                     this_depth = fpath.lstrip(os.path.sep).count(os.path.sep)
                     if (
                         (depth is None or this_depth <= depth) and
