@@ -11,7 +11,7 @@ import mmap
 def egrep(path, regex):
     """
     Grep for regex `regex` in file `path`. Should be reasonably fast. `regex`
-    may be both an instance of a `re.compile()` regex, or a string. Files are
+    may be both a compiled regexp (`re.compile()`), or a string. Files are
     opened in binary mode, so the regexp must also be binary (e.g.
     `b".*foo.*"`)
 
