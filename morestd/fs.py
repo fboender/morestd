@@ -79,13 +79,18 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
     If `absolute` is set to True, `dirs` and `path` will be made absolute
     (relative to the `/` directory).
 
-    If `follow_links` is set to True, symlinks will be followed. This can lead
-    to endless loops. It is disabled by default.
+    If `follow_links` is set to True, symlinks to dirs will be recursed into,
+    as long as the real path lies under `root_dir`. This can lead to endless
+    loops. It is disabled by default.
 
     `on_error` is a callable which will be called when an error occurs. It
     should receive one parameter, which is the full path to the file that
     caused the problem. If `on_error` is None (default), an exception is raised
     instead.
+
+    This function yields one dict per file in the form as returned by
+    `file_info()`. The yielded values should *not* be modified, otherwise
+    behaviour is unspecified.
     """
     # Figure out device which root_dir is on, so we can honor `one_fs`
     root_stat = os.stat(root_dir)
