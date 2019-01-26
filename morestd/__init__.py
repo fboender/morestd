@@ -11,3 +11,4 @@ from . import fs     # noqa
 from . import file   # noqa
 from . import shell  # noqa
 from . import net    # noqa
+from . import proc   # noqa
