@@ -10,3 +10,4 @@ from . import time   # noqa
 from . import fs     # noqa
 from . import file   # noqa
 from . import shell  # noqa
+from . import net    # noqa

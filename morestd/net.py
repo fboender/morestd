@@ -21,19 +21,16 @@ def fqdn():
     return fqdn
 
 
-def hex_ip4(ip):
+def ip4_hex_to_int(hex_ip):
     """
-    Convert a hex IPv4 as found in /proc/net/tcp to a dotted IP.
+    Convert a little-indian hex IPv4 as found in /proc/net/tcp to a integer.
 
-    >>> hex_ip4("0E01A8C0")
-    '192.168.1.14'
+    >>> ip4_hex_to_int("0E01A8C0")  # 192.168.1.14
+    3232235790
     """
-    return(".".join([
-        str(int(ip[6:8], 16)),
-        str(int(ip[4:6], 16)),
-        str(int(ip[2:4], 16)),
-        str(int(ip[0:2], 16)),
-    ]))
+    little_indian_int_ip = int(hex_ip, 16)
+    big_indian_int_ip = socket.htonl(little_indian_int_ip)
+    return big_indian_int_ip
 
 
 if __name__ == '__main__':
