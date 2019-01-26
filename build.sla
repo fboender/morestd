@@ -29,6 +29,7 @@ doctest () {
 
 test () {
     # Run all tests and linting
+    export PYTHONPATH="."
     lint
     doctest
 }
