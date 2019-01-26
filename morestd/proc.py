@@ -97,6 +97,34 @@ def _socket_inode_to_pid(inode):
 
 def net_open_ports():
     """
+    List open network ports.
+
+    Returns a list of dictionaries containing information on open / listening
+    IPv4 TCP and UDP ports. Example output:
+
+        [
+         {'local_address': IPv4Address('127.0.0.53'),
+          'local_port': 53,
+          'pid': 21129,
+          'proto': 'tcp4',
+          'remote_address': IPv4Address('0.0.0.0'),
+          'remote_port': 0,
+          'state': 'LISTEN',
+          'uid': 101,
+          'user': 'systemd-resolve'},
+         {'local_address': IPv4Address('0.0.0.0'),
+          'local_port': 22,
+          'pid': 1041,
+          'proto': 'tcp4',
+          'remote_address': IPv4Address('0.0.0.0'),
+          'remote_port': 0,
+          'state': 'LISTEN',
+          'uid': 0,
+          'user': 'root'}
+        ]
+
+    If the user is not root, it's possible that the `pid` cannot be found, in
+    which case it will be `None`.
     """
     ports = []
 
