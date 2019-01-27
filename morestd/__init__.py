@@ -4,7 +4,8 @@
 # Copyright 2010-2018 Ferry Boender, released under the MIT license
 #
 
-version = (0, 1)
+_version_str = '0.1'
+version = [int(v) for v in _version_str.split(".")]
 
 from . import time   # noqa
 from . import fs     # noqa
