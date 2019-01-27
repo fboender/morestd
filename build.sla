@@ -10,6 +10,9 @@ clean () {
     # Clean the repo of artifacts
     find ./ -name "*.pyc" -delete
     find ./ -name "__pycache__" -delete
+    rm -rf build
+    rm -rf dist
+    rm -rf *.egg-info
 }
 
 flake () {
@@ -32,4 +35,48 @@ test () {
     export PYTHONPATH="."
     lint
     doctest
+}
+
+release () {
+    # Bump version, create and upload new release
+    VERSION="$1"
+
+    if [ -z "$VERSION" ]; then
+        echo "No version specified" >&2
+        exit 1
+    fi
+
+    # Check current python version
+    PY_VERSION="$(python -c 'import sys; print(sys.version_info[0])')"
+    if [ "$PY_VERSION" != "3" ]; then
+        echo "Wrong python version: $PY_VERSION" >&2
+        exit 1
+    fi
+
+    # Check git status
+    clean
+    UNSTAGED=$(git diff-index --quiet HEAD -- 2>/dev/null; echo $?)
+    UNCOMMITTED=$(git diff-files --quiet --ignore-submodules --; echo $?)
+    UNTRACKED=$([ -z "$(git ls-files --exclude-standard --others)" ]; echo $?)
+    if [ "$UNTRACKED" -ne 0 ] || [ "$UNCOMMITTED" -ne 0 ] || [ "$UNTRACKED" -ne 0 ]; then
+        echo "Repo not clean" >&2
+        exit 2
+    fi
+
+    # Prepare repo
+    test
+    clean
+
+    # Bump version
+    sed -i "s/version=.*,$/version='$VERSION',/" setup.py
+    sed -i "s/^_version_str = .*$/_version_str = '$VERSION'/" morestd/__init__.py
+
+    # Generate dist
+    python setup.py sdist bdist_wheel
+    twine upload --repository prod dist/*
+
+    # Commit
+    git add setup.py morestd/__init__.py
+    git commit -m "Version bumped to $VERSION"
+    git tag "version-$VERSION"
 }
