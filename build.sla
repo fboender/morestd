@@ -79,4 +79,6 @@ release () {
     git add setup.py morestd/__init__.py
     git commit -m "Version bumped to $VERSION"
     git tag "version-$VERSION"
+
+    clean
 }
