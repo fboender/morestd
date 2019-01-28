@@ -13,3 +13,4 @@ from . import file   # noqa
 from . import shell  # noqa
 from . import net    # noqa
 from . import proc   # noqa
+from . import data   # noqa

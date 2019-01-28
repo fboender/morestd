@@ -4,6 +4,10 @@
 # Copyright 2010-2018 Ferry Boender, released under the MIT license
 #
 
+"""
+Various tools and helpers to work with standard data structures.
+"""
+
 import copy
 
 
