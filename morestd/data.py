@@ -79,6 +79,135 @@ def deepupdate(target, src, overwrite=True):
                 target[k] = copy.copy(v)
 
 
+# Empty object who's id we'll use as a 'no default given' placeholder for the
+# `get` method
+_get_no_default = object()
+
+
+class _Get:
+    def __init__(self, data, default):
+        self.data = data
+        self.default = default
+        self.pointer = data
+
+    def _get(self, k):
+        if self.pointer is self.default:
+            return self
+
+        try:
+            self.pointer = self.pointer[k]
+        except (IndexError, KeyError):
+            if self.default is not _get_no_default:
+                self.pointer = self.default
+            else:
+                raise
+
+        return self
+
+    def __getattr__(self, attr):
+        return self._get(attr)
+
+    def __getitem__(self, key):
+        return self._get(key)
+
+    def expr(self, expr):
+        escape = False
+        cur_token = ''
+
+        for c in expr:
+            if escape is True:
+                cur_token += c
+                escape = False
+            else:
+                if c == '\\':
+                    # Next char will be escaped
+                    escape = True
+                    continue
+                elif c == '[':
+                    # Next token is of type index (list)
+                    if len(cur_token) > 0:
+                        self._get(cur_token)
+                        cur_token = ''
+                elif c == ']':
+                    # End of index token. Next token defaults to a key (dict)
+                    if len(cur_token) > 0:
+                        self._get(int(cur_token))
+                        cur_token = ''
+                elif c == '.':
+                    # End of key token. Next token defaults to a key (dict)
+                    if len(cur_token) > 0:
+                        self._get(cur_token)
+                        cur_token = ''
+                else:
+                    # Append char to token name
+                    cur_token += c
+
+        if len(cur_token) > 0:
+            self._get(cur_token)
+
+        return self
+
+    def val(self):
+        return self.pointer
+
+
+def get(data, default=_get_no_default):
+    """
+    Easily access deeply nested data structures without having to test for
+    key and index availability at each level.
+
+    This turns code such as:
+
+        try:
+          return d.getdefault("feed", {}).getdefault("tags", [])[0]
+        except IndexError:
+          return "default value"
+
+    into:
+
+        return get(d, "default_value").feed.tags[0].val()
+
+    Examples:
+
+    >>> d = {
+    ...   'feed': {
+    ...     'id': 'my_feed',
+    ...     'url': 'http://example.com/feed.rss',
+    ...     'tags': ['devel', 'example', 'python'],
+    ...     'short.desc': 'A feed',
+    ...     'list': [
+    ...       {
+    ...         'uuid': 'e9b48a2'
+    ...       }
+    ...     ]
+    ...   }
+    ... }
+
+    # Get value
+    >>> get(d).feed.tags[-1].val()
+    'python'
+
+    >>> get(d).feed.list[0].uuid.val()
+    'e9b48a2'
+
+    # Return default if path is not found
+    >>> get(d, "default.ico").feed.icon.val()
+    'default.ico'
+
+    # Access paths with special chars in them
+    >>> get(d).feed["short.desc"].val()
+    'A feed'
+
+    # Use a string expression to access data
+    >>> get(d).expr("feed.short\\.desc").val()
+    'A feed'
+
+    >>> get(d).expr("feed.list[0].uuid").val()
+    'e9b48a2'
+    """
+    return(_Get(data, default))
+
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
