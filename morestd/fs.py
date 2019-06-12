@@ -104,6 +104,16 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
     This function yields one dict per file in the form as returned by
     `file_info()`. The yielded values should *not* be modified, otherwise
     behaviour is unspecified.
+
+    Examples:
+
+    Ignore errors:
+
+        find('/etc', on_error=lambda cur_dir, err: None)
+
+    Find files that are owned by root and have the SUID bit set:
+
+        find('/usr/bin', uid=0, perm=stat.S_ISUID)
     """
     # Figure out device which root_dir is on, so we can honor `one_fs`
     root_stat = os.stat(root_dir)
