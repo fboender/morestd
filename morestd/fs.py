@@ -123,8 +123,8 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
                     (ftype is None or ftype == fileinfo["type"]) and
                     (min_size is None or fileinfo["size"] >= min_size) and
                     (max_size is None or fileinfo["size"] <= max_size) and
-                    (uid is None or fileinfo[""] == uid) and
-                    (gid is None or fileinfo[""] == gid)
+                    (uid is None or fileinfo["uid"] == uid) and
+                    (gid is None or fileinfo["gid"] == gid)
                 ):
                     yield fileinfo
 
