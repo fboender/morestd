@@ -55,8 +55,8 @@ def file_info(path):
 
 
 def find(root_dir, name=None, path=None, ftype=None, min_size=None,
-         max_size=None, uid=None, gid=None, depth=None, one_fs=True,
-         absolute=False, follow_links=False, on_error=None):
+         max_size=None, uid=None, gid=None, perm=None, depth=None,
+         one_fs=True, absolute=False, follow_links=False, on_error=None):
     """
     Recursively find files and directories matching certain criteria.
 
@@ -79,6 +79,9 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
 
     `uid` and `gid` limit files to those that match the given owner user and
     group id (integers).
+
+    `perm` is a permissions bitmask (see the `stat.S_IXXX` constants), which
+    limits the files to those whoms mode has all the bits in the bitmask set.
 
     `depth` determines how deep to scan. E.g. `depth=2` will only scan two
     directories deep (relative to `root_dir`).
@@ -134,7 +137,8 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
                     (min_size is None or fileinfo["size"] >= min_size) and
                     (max_size is None or fileinfo["size"] <= max_size) and
                     (uid is None or fileinfo["uid"] == uid) and
-                    (gid is None or fileinfo["gid"] == gid)
+                    (gid is None or fileinfo["gid"] == gid) and
+                    (perm is None or fileinfo["mode"] & perm == perm)
                 ):
                     yield fileinfo
 
