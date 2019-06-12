@@ -65,16 +65,24 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
     `root_dir` is the starting directory from which to find files.
 
     If `name` is provided, only files matching the given shell globbing pattern
-    will be included. If `path` is provided, the same is done but for the
-    file's entire path. `ftype` can be used to limit the files to a certain
-    type. Valid values are 'fifo', 'char', 'dir', 'block', 'file', 'link',
-    'socket'. `min_size` and `max_size` limit files to those who's size is >=
-    `min_size` and <= `max_size` respectively. `uid` and `gid` limit files to
-    those that match the given owner user and group id.
+    will be included.
+
+    If `path` is provided, the same is done but for the file's entire path.
+
+    `ftype` can be used to limit the files to a certain type. Valid values are
+    'fifo', 'char', 'dir', 'block', 'file', 'link', 'socket'.
+
+    `min_size` and `max_size` limit files to those who's size is >= `min_size`
+    and <= `max_size` respectively.
+
+    `uid` and `gid` limit files to those that match the given owner user and
+    group id (integers).
 
     `depth` determines how deep to scan. E.g. `depth=2` will only scan two
-    directories deep (relative to `root_dir`). `one_fs` limits the scan to the
-    same file system / device that `root_fs` is on.
+    directories deep (relative to `root_dir`).
+
+    `one_fs` limits the scan to the same file system / device that `root_fs` is
+    on.
 
     If `absolute` is set to True, `dirs` and `path` will be made absolute
     (relative to the `/` directory).
