@@ -30,6 +30,7 @@ def file_info(path):
             'path': '/etc/passwd',
             'type': 'file',
             'size': 2790,
+            'mode': 33188,
             'uid': 0,
             'gid': 0,
             'device': 64769
@@ -46,6 +47,7 @@ def file_info(path):
         "path": path,
         "type": ftype,
         "size": fstat.st_size,
+        "mode": fstat.st_mode,
         "uid": fstat.st_uid,
         "gid": fstat.st_gid,
         "device": fstat.st_dev,
