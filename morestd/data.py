@@ -9,6 +9,9 @@ Various tools and helpers to work with standard data structures.
 """
 
 import copy
+import os
+import pickle
+import pickle
 
 
 def to_bool(s):
@@ -206,6 +209,49 @@ def get(data, default=_get_no_default):
     'e9b48a2'
     """
     return(_Get(data, default))
+
+
+def cache(timeout = 300, debug=False, path = ".cache"):
+    """
+    Function decorator for caching the return value of the function on disk.
+    """
+
+    def print_debug(*args, **kwargs):
+        if debug:
+            print(args, kwargs)
+
+    def decorator(func): 
+        def get_cache(*args, **kwargs):
+            global cache_used
+            cache_file = "{}/{}.cache".format(path, func.__name__)
+            if os.path.exists(cache_file):
+                file_age = time.time() - os.stat(cache_file).st_mtime
+                # if file_age > int(conf.get("cache_age", 3600)):
+                if file_age > int(timeout):
+                    print_debug("{}: cache expired ({} seconds old)".
+                            format(func.__name__, file_age))
+                else:
+                    print_debug("{}: using cached data".
+                            format(func.__name__))
+                    cache_used = True
+
+                    with open(cache_file, 'rb') as fd:
+                        res = pickle.load(fd)
+
+                    return res
+
+            print_debug("{}: calling and caching result".format(func.__name__))
+            res = func(*args, **kwargs)
+            if not os.path.isdir('.cache'):
+                os.mkdir('.cache')
+
+            with open(cache_file, 'wb') as fd:
+                pickle.dump(res, fd)
+
+            return res
+
+        return get_cache
+    return decorator
 
 
 if __name__ == '__main__':
