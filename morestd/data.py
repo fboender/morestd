@@ -11,7 +11,6 @@ Various tools and helpers to work with standard data structures.
 import copy
 import os
 import pickle
-import pickle
 
 
 def to_bool(s):
@@ -211,7 +210,7 @@ def get(data, default=_get_no_default):
     return(_Get(data, default))
 
 
-def cache(timeout = 300, debug=False, path = ".cache"):
+def cache(timeout = 300, debug=False, path = "."):
     """
     Function decorator for caching the return value of the function on disk.
     """
@@ -242,8 +241,8 @@ def cache(timeout = 300, debug=False, path = ".cache"):
 
             print_debug("{}: calling and caching result".format(func.__name__))
             res = func(*args, **kwargs)
-            if not os.path.isdir('.cache'):
-                os.mkdir('.cache')
+            if not os.path.isdir(path):
+                os.mkdir(path)
 
             with open(cache_file, 'wb') as fd:
                 pickle.dump(res, fd)
