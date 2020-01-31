@@ -86,8 +86,8 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
     `depth` determines how deep to scan. E.g. `depth=2` will only scan two
     directories deep (relative to `root_dir`).
 
-    `one_fs` limits the scan to the same file system / device that `root_fs` is
-    on.
+    `one_fs` limits the scan to the same file system / device that `root_dir`
+    is on.
 
     If `absolute` is set to True, `dirs` and `path` will be made absolute
     (relative to the `/` directory).
@@ -97,9 +97,9 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
     loops. It is disabled by default.
 
     `on_error` is a callable which will be called when an error occurs. It
-    should receive one parameter, which is the full path to the file that
-    caused the problem. If `on_error` is None (default), an exception is raised
-    instead.
+    should receive two parameters: the full path to the dir/file that caused
+    the problem and the exception. If `on_error` is None (default), an
+    exception is raised instead.
 
     This function yields one dict per file in the form as returned by
     `file_info()`. The yielded values should *not* be modified, otherwise
