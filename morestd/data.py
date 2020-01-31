@@ -11,6 +11,7 @@ Various tools and helpers to work with standard data structures.
 import copy
 import os
 import pickle
+import time
 
 
 def to_bool(s):
