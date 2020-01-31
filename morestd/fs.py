@@ -163,10 +163,9 @@ def find(root_dir, name=None, path=None, ftype=None, min_size=None,
                     )
                 ):
                     this_depth = fpath.lstrip(os.path.sep).count(os.path.sep)
-                    if (
-                        (depth is None or this_depth <= depth) and
-                        (one_fs is True and fileinfo["device"] == root_dev)
-                    ):
+                    depth_reached = depth is not None and this_depth >= depth
+                    same_fs = one_fs is False or fileinfo["device"] == root_dev
+                    if (not depth_reached and same_fs):
                         stack.append(fileinfo["path"])
         except Exception as err:
             if on_error is None:
