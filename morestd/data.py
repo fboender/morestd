@@ -211,7 +211,7 @@ def get(data, default=_get_no_default):
     return(_Get(data, default))
 
 
-def cache(timeout = 300, debug=False, path = "."):
+def cache(timeout=300, debug=False, path="."):
     """
     Function decorator for caching the return value of the function on disk.
     """
@@ -220,7 +220,7 @@ def cache(timeout = 300, debug=False, path = "."):
         if debug:
             print(args, kwargs)
 
-    def decorator(func): 
+    def decorator(func):
         def get_cache(*args, **kwargs):
             global cache_used
             cache_file = "{}/{}.cache".format(path, func.__name__)
@@ -228,11 +228,11 @@ def cache(timeout = 300, debug=False, path = "."):
                 file_age = time.time() - os.stat(cache_file).st_mtime
                 # if file_age > int(conf.get("cache_age", 3600)):
                 if file_age > int(timeout):
-                    print_debug("{}: cache expired ({} seconds old)".
-                            format(func.__name__, file_age))
+                    msg = "{}: cache expired ({} seconds old)"
+                    print_debug(msg.format(func.__name__, file_age))
                 else:
-                    print_debug("{}: using cached data".
-                            format(func.__name__))
+                    msg = "{}: using cached data"
+                    print_debug(msg.format(func.__name__))
                     cache_used = True
 
                     with open(cache_file, 'rb') as fd:

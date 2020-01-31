@@ -30,6 +30,7 @@ def is_pid_running(pid):
             # (EINVAL, EPERM, ESRCH)
             raise
 
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
