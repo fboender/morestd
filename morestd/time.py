@@ -29,6 +29,8 @@ def duration(secs):
     '28d 11h'
     """
 
+    if int(secs) == 0:
+        return "0s"
     sec = timedelta(seconds=int(secs))
     d = datetime(1, 1, 1) + sec
     k = ["%dd", "%dh", "%dm", "%ds"]
