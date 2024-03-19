@@ -27,12 +27,12 @@ lint () {
 
 doctest () {
     # Run all doc (unit) tests
+    export PYTHONPATH="."
     find morestd -name "*.py" \! -name "__init__.py" -exec python3 '{}' \;
 }
 
 test () {
     # Run all tests and linting
-    export PYTHONPATH="."
     lint
     doctest
 }
