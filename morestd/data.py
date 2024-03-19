@@ -208,7 +208,7 @@ def get(data, default=_get_no_default):
     >>> get(d).expr("feed.list[0].uuid").val()
     'e9b48a2'
     """
-    return(_Get(data, default))
+    return _Get(data, default)
 
 
 def cache(timeout=300, debug=False, path="."):
