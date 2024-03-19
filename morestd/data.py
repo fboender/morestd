@@ -54,23 +54,23 @@ def deepupdate(target, src, overwrite=True):
     {'name': 'Ferry', 'hobbies': ['programming', 'sci-fi', 'gaming']}
     """
     for k, v in src.items():
-        if type(v) == list:
+        if isinstance(v, list):
             if k not in target:
                 target[k] = copy.deepcopy(v)
             elif overwrite is True:
                 target[k].extend(v)
-        elif type(v) == dict:
+        elif isinstance(v, dict):
             if k not in target:
                 target[k] = copy.deepcopy(v)
             else:
                 deepupdate(target[k], v, overwrite=overwrite)
-        elif type(v) == set:
+        elif isinstance(v, set):
             if k not in target:
                 target[k] = v.copy()
             elif overwrite is True:
-                if type(target[k]) == list:
+                if isinstance(target[k], list):
                     target[k].extend(v)
-                elif type(target[k]) == set:
+                elif isinstance(target[k], set):
                     target[k].update(v)
                 else:
                     raise TypeError("Cannot update {} with {}".format(
