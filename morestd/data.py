@@ -202,7 +202,7 @@ def get(data, default=_get_no_default):
     'A feed'
 
     # Use a string expression to access data
-    >>> get(d).expr("feed.short\\.desc").val()
+    >>> get(d).expr("feed.short\\\\.desc").val()
     'A feed'
 
     >>> get(d).expr("feed.list[0].uuid").val()
