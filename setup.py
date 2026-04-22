@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='morestd',
-      version='0.5',
+      version='0.6',
       description='A collection of additional standard libraries for Python.',
       long_description=open('README.md').read(),
       long_description_content_type="text/markdown",
