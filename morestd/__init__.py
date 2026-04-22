@@ -14,3 +14,4 @@ from . import shell  # noqa
 from . import net    # noqa
 from . import data   # noqa
 from . import lsb    # noqa
+from . import retry  # noqa
